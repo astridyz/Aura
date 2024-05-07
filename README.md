@@ -26,14 +26,14 @@ log := aura.NewLogger("Main")
 
 log.SetPrefix(&aura.Prefix{ // --> Prefixes aren't needed
 	Structure: "Astrid: ",
-	Color:     colors.BrightGreen,
+	Color:     colors.BrightPink,
 })
 
 log.Print("Hey, keep going! Don't give up.")
 log.Printf("Hey, %v, how are you?", "Kame")
 
 log.Error("That's an error!")
-log.Errorf("Hey, %v, help me with this problem...")
+log.Errorf("Hey, %v, help me with this problem...", "Kame")
 
 log.Panic("And that's a panic.")
 ```
