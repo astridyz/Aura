@@ -11,6 +11,8 @@ type logger struct {
 	Prefix *Prefix
 }
 
+// --> Print
+
 func (l *logger) Print(message ...any) string {
 	prefix := l.Prefix.Format()
 	text := colors.FormatCyan(message...)
@@ -25,12 +27,12 @@ func (l *logger) Printf(format string, arguments ...any) string {
 	return l.Print(text)
 }
 
+// --> Panic
+
 func (l *logger) Panic(message ...any) {
 	prefix := l.Prefix.Format()
 	text := colors.FormatYellow(message...)
-
 	errorText := colors.Format(colors.BrightPurple, "PANIC")
-
 	result := fmt.Sprintf("%v%v %v\n", prefix, errorText, text)
 
 	print(result)
@@ -42,11 +44,12 @@ func (l *logger) Panicf(format string, arguments ...any) {
 	l.Panic(text)
 }
 
+// --> Error
+
 func (l *logger) Error(message ...any) {
 	prefix := l.Prefix.Format()
 	text := colors.FormatYellow(message...)
 	errorText := colors.Format(colors.BrightRed, "ERROR")
-
 	result := fmt.Sprintf("%v%v %v\n", prefix, errorText, text)
 
 	print(result)
