@@ -8,7 +8,7 @@ Being developed by myself.
 ## Installation
 
 Run:
-`go get "github.com/astridyz/Aura`
+`go get "github.com/astridyz/Aura"`
 
 Import as:
 ```go
@@ -24,7 +24,7 @@ import "github.com/astridyz/Aura/src/colors"
 ```go
 log := aura.NewLogger("Main")
 
-log.SetPrefix(&aura.Prefix{ // --> Prefix aren't needed
+log.SetPrefix(&aura.Prefix{ // --> Prefixex aren't needed
 	Structure: "Astrid: ",
 	Color:     colors.BrightGreen,
 })
