@@ -4,29 +4,31 @@ import (
 	"fmt"
 )
 
+type Color string
+
 const (
-	Cyan   = "\u001b[38;5;159m"
-	Pink   = "\u001b[38;5;225m"
-	Red    = "\u001b[38;5;224m"
-	Green  = "\u001b[38;5;194m"
-	Yellow = "\u001b[38;5;230m"
-	Purple = "\u001b[38;5;141m"
-	Reset  = "\u001b[0m"
+	Cyan   Color = "\u001b[38;5;159m"
+	Pink   Color = "\u001b[38;5;225m"
+	Red    Color = "\u001b[38;5;224m"
+	Green  Color = "\u001b[38;5;194m"
+	Yellow Color = "\u001b[38;5;230m"
+	Purple Color = "\u001b[38;5;141m"
+	Reset  Color = "\u001b[0m"
 )
 
 const (
-	BackgroundCyan   = "\u001b[48;5;159m"
-	BackgroundPink   = "\u001b[48;5;225m"
-	BackgroundRed    = "\u001b[48;5;224m"
-	BackgroundGreen  = "\u001b[48;5;194m"
-	BackgroundYellow = "\u001b[48;5;230m"
-	BackgroundPurple = "\u001b[48;5;141m"
+	BrightCyan   Color = "\u001b[1m\u001b[38;5;159m"
+	BrightPink   Color = "\u001b[1m\u001b[38;5;225m"
+	BrightRed    Color = "\u001b[1m\u001b[38;5;224m"
+	BrightGreen  Color = "\u001b[1m\u001b[38;5;194m"
+	BrightYellow Color = "\u001b[1m\u001b[38;5;230m"
+	BrightPurple Color = "\u001b[1m\u001b[38;5;141m"
 )
 
-func Format(color string, message ...any) string {
+func Format(mensageColor Color, message ...any) string {
 	text := fmt.Sprint(message...)
 
-	return fmt.Sprintf("%v%v%v", color, text, Reset)
+	return fmt.Sprintf("%v%v%v", mensageColor, text, Reset)
 }
 
 // --> Color.FormatCyan("message")
@@ -35,5 +37,13 @@ func FormatCyan(message ...any) string {
 }
 
 func FormatPink(message ...any) string {
-	return fmt.Sprintf("%v%v%v", Pink, message, Reset)
+	return Format(Pink, message...)
+}
+
+func FormatRed(message ...any) string {
+	return Format(Red, message...)
+}
+
+func FormatYellow(message ...any) string {
+	return Format(Yellow, message...)
 }
