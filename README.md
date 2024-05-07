@@ -22,18 +22,18 @@ import "github.com/astridyz/Aura/src/colors"
 
 ## Usage
 ```go
-	log := aura.NewLogger("Main")
+log := aura.NewLogger("Main")
 
-	log.SetPrefix(&aura.Prefix{ // --> Prefix aren't needed
-		Structure: "Astrid: ",
-		Color:     colors.BrightGreen,
-	})
+log.SetPrefix(&aura.Prefix{ // --> Prefix aren't needed
+	Structure: "Astrid: ",
+	Color:     colors.BrightGreen,
+})
 
-	log.Print("Hey, keep going! Don't give up.")
-	log.Printf("Hey, %v, how are you?", "Kame")
+log.Print("Hey, keep going! Don't give up.")
+log.Printf("Hey, %v, how are you?", "Kame")
 
-	log.Error("That's an error!")
-	log.Errorf("Hey, %v, help me with this problem...")
+log.Error("That's an error!")
+log.Errorf("Hey, %v, help me with this problem...")
 
-	log.Panic("And that's a panic.")
+log.Panic("And that's a panic.")
 ```
