@@ -29,7 +29,7 @@ func (l *logger) Panic(message ...any) {
 	prefix := l.Prefix.Format()
 	text := colors.FormatYellow(message...)
 
-	errorText := colors.Format(colors.BrightRed, "ERROR")
+	errorText := colors.Format(colors.BrightPurple, "PANIC")
 
 	result := fmt.Sprintf("%v%v %v\n", prefix, errorText, text)
 
@@ -40,6 +40,21 @@ func (l *logger) Panic(message ...any) {
 func (l *logger) Panicf(format string, arguments ...any) {
 	text := fmt.Sprintf(format, arguments...)
 	l.Panic(text)
+}
+
+func (l *logger) Error(message ...any) {
+	prefix := l.Prefix.Format()
+	text := colors.FormatYellow(message...)
+	errorText := colors.Format(colors.BrightRed, "ERROR")
+
+	result := fmt.Sprintf("%v%v %v\n", prefix, errorText, text)
+
+	print(result)
+}
+
+func (l *logger) Errorf(format string, arguments ...any) {
+	text := fmt.Sprintf(format, arguments...)
+	l.Error(text)
 }
 
 // --> Setters
