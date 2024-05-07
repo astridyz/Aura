@@ -1,5 +1,5 @@
 # Aura Logger
-Aura is a lightweight package to help in Logging.
+Aura is a lightweight module to help in Logging.
 Being developed by myself.
 
 ## Info
@@ -24,7 +24,7 @@ import "github.com/astridyz/Aura/src/colors"
 ```go
 log := aura.NewLogger("Main")
 
-log.SetPrefix(&aura.Prefix{ // --> Prefixex aren't needed
+log.SetPrefix(&aura.Prefix{ // --> Prefixes aren't needed
 	Structure: "Astrid: ",
 	Color:     colors.BrightGreen,
 })
