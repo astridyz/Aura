@@ -3,7 +3,7 @@ package aura
 import (
 	"fmt"
 
-	"github.com/astridyz/Aura/colors"
+	"github.com/astridyz/Aura/src/colors"
 )
 
 type logger struct {
