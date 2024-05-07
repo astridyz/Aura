@@ -3,7 +3,7 @@ package aura
 import (
 	"testing"
 
-	"github.com/astridyz/Aura/colors"
+	"github.com/astridyz/Aura/src/colors"
 )
 
 func TestLoggerError(t *testing.T) {
