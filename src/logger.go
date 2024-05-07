@@ -8,7 +8,7 @@ import (
 
 type logger struct {
 	Name   string
-	Prefix Prefix
+	Prefix *Prefix
 }
 
 func (l *logger) Print(message ...any) string {
@@ -42,6 +42,12 @@ func (l *logger) Panicf(format string, arguments ...any) {
 	l.Panic(text)
 }
 
+// --> Setters
+
+func (l *logger) SetPrefix(Prefix *Prefix) {
+	l.Prefix = Prefix
+}
+
 type Prefix struct {
 	Structure string
 	Color     colors.Color
@@ -54,8 +60,7 @@ func (p *Prefix) Format() string {
 // --> log := aura.NewLogger()
 func NewLogger(name string) *logger {
 	instance := &logger{
-		Name:   name,
-		Prefix: Prefix{Structure: "ASTRID: ", Color: colors.BrightPink},
+		Name: name,
 	}
 
 	return instance
