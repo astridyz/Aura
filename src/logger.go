@@ -9,15 +9,34 @@ import (
 )
 
 type logger struct {
-	Name   string
-	prefix *Prefix
+	Prefix *Prefix
+}
+
+// Formats prefix with color, adds it to a subprefix and adds a message
+func (l *logger) log(s *subPrefix, color colors.Color, message ...any) string {
+
+	var prefix string
+	var subPrefixText string
+
+	if l.Prefix != nil {
+		prefix = l.Prefix.Format()
+	}
+
+	if s != nil {
+		subPrefixText = colors.Format(s.Color, s.Structure)
+	}
+
+	text := colors.Format(color, message...)
+	result := removeSpaceFromFormatedMessage(fmt.Sprintf("%v%v %v\n", prefix, subPrefixText, text))
+
+	return result
 }
 
 // --> Print
 
 // Is equivalent to print() with color and prefix if defined.
 func (l *logger) Print(message ...any) string {
-	result := formatPrefixWithText(l.prefix, message...)
+	result := l.log(nil, colors.Cyan, message...)
 
 	print(result)
 	return result
@@ -29,6 +48,26 @@ func (l *logger) Printf(format string, arguments ...any) string {
 	return l.Print(text)
 }
 
+// --> Warn
+
+// Is equivalent to print() with color and prefix if defined.
+func (l *logger) Warn(message ...any) string {
+	subPrefix := &subPrefix{
+		Structure: "WARN ",
+		Color:     colors.BrightYellow,
+	}
+	result := l.log(subPrefix, colors.BrightYellow, message...)
+
+	print(result)
+	return result
+}
+
+// Is equivalent to logger.Print() with formatting
+func (l *logger) Warnf(format string, arguments ...any) string {
+	text := fmt.Sprintf(format, arguments...)
+	return l.Warn(text)
+}
+
 // --> Panic
 
 // It prints a message and call panic() with color
@@ -37,7 +76,7 @@ func (l *logger) Panic(message ...any) {
 		Structure: "PANIC",
 		Color:     colors.BrightPurple,
 	}
-	result := formatPrefixWithSubPrefix(l.prefix, subPrefix, message...)
+	result := l.log(subPrefix, colors.BrightYellow, message...)
 
 	print(result)
 	panic(fmt.Sprint(message...))
@@ -57,7 +96,7 @@ func (l *logger) Error(message ...any) {
 		Structure: "ERROR",
 		Color:     colors.BrightRed,
 	}
-	result := formatPrefixWithSubPrefix(l.prefix, subPrefix, message...)
+	result := l.log(subPrefix, colors.BrightYellow, message...)
 
 	print(result)
 }
@@ -76,7 +115,7 @@ func (l *logger) Fatal(message ...any) {
 		Structure: "FATAL",
 		Color:     colors.BrightOrange,
 	}
-	result := formatPrefixWithSubPrefix(l.prefix, subPrefix, message...)
+	result := l.log(subPrefix, colors.BrightYellow, message...)
 
 	print(result)
 	os.Exit(1)
@@ -93,7 +132,7 @@ func (l *logger) Fatalf(format string, arguments ...any) {
 // Sets the logger prefix.
 // The prefix will be added to every logger function message.
 func (l *logger) SetPrefix(Prefix *Prefix) {
-	l.prefix = Prefix
+	l.Prefix = Prefix
 }
 
 // --> Prefix
@@ -104,6 +143,11 @@ type Prefix struct {
 	Color     colors.Color
 }
 
+// Formats prefix with color
+func (p *Prefix) Format() string {
+	return colors.Format(p.Color, p.Structure)
+}
+
 // Some functions have subprefixes, like error and panic
 // It is used to symbolize which message type was printed
 type subPrefix struct {
@@ -111,52 +155,20 @@ type subPrefix struct {
 	Color     colors.Color
 }
 
-// Formats prefix with color
-func (p *Prefix) Format() string {
-	return colors.Format(p.Color, p.Structure)
-}
-
 // --> log := aura.NewLogger()
 
 // Creates a new logger
-func NewLogger(name string) *logger {
-	instance := &logger{
-		Name: name,
+func NewLogger(prefixes ...*Prefix) *logger {
+	instance := &logger{}
+
+	if len(prefixes) > 0 {
+		instance.Prefix = prefixes[0]
 	}
 
 	return instance
 }
 
 // --> Utils
-
-// Formats prefix with color, adds it to a subprefix and adds a message
-func formatPrefixWithSubPrefix(p *Prefix, s *subPrefix, message ...any) string {
-
-	var prefix string
-	if p != nil {
-		prefix = p.Format()
-	}
-
-	text := colors.FormatYellow(message...)
-	subPrefixText := colors.Format(s.Color, s.Structure)
-
-	result := removeSpaceFromFormatedMessage(fmt.Sprintf("%v%v %v\n", prefix, subPrefixText, text))
-	return result
-}
-
-// Formats prefix with color and adds it to a message
-func formatPrefixWithText(p *Prefix, message ...any) string {
-
-	var prefix string
-	if p != nil {
-		prefix = p.Format()
-	}
-
-	text := colors.FormatCyan(message...)
-
-	result := removeSpaceFromFormatedMessage(fmt.Sprintf("%v%v\n", prefix, text))
-	return result
-}
 
 func removeSpaceFromFormatedMessage(message string) string {
 	message = strings.TrimLeftFunc(message, func(r rune) bool {

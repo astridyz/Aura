@@ -6,7 +6,7 @@ import (
 
 func TestLoggerError(t *testing.T) {
 
-	log := NewLogger("Astrid")
+	log := NewLogger()
 
 	/*
 		log.SetPrefix(&Prefix{
@@ -17,6 +17,9 @@ func TestLoggerError(t *testing.T) {
 
 	log.Print("Hey, keep going! Don't give up.")
 	log.Printf("Hey, %v, how are you?", "Kame")
+
+	log.Warn("Cmon.. dont be afraid!")
+	log.Warnf("Hey, %v, be allert!", "Kame")
 
 	log.Error("That's an error!")
 	log.Errorf("Hey, %v, help me with this problem...", "Kame")
