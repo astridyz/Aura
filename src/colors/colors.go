@@ -13,6 +13,7 @@ const (
 	Green  Color = "\u001b[38;5;194m"
 	Yellow Color = "\u001b[38;5;230m"
 	Purple Color = "\u001b[38;5;141m"
+	Orange Color = "\u001b[38;5;216m"
 	Reset  Color = "\u001b[0m"
 )
 
@@ -23,6 +24,7 @@ const (
 	BrightGreen  Color = "\u001b[1m\u001b[38;5;194m"
 	BrightYellow Color = "\u001b[1m\u001b[38;5;230m"
 	BrightPurple Color = "\u001b[1m\u001b[38;5;141m"
+	BrightOrange Color = "\u001b[1m\u001b[38;5;216m"
 )
 
 func Format(mensageColor Color, message ...any) string {

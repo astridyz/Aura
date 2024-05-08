@@ -2,6 +2,8 @@ package aura
 
 import (
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/astridyz/Aura/src/colors"
 )
@@ -15,7 +17,7 @@ type logger struct {
 
 // Is equivalent to print() with color and prefix if defined.
 func (l *logger) Print(message ...any) string {
-	result := l.prefix.FormatText(message...)
+	result := formatPrefixWithText(l.prefix, message...)
 
 	print(result)
 	return result
@@ -35,7 +37,7 @@ func (l *logger) Panic(message ...any) {
 		Structure: "PANIC",
 		Color:     colors.BrightPurple,
 	}
-	result := l.prefix.FormatTextWithSubPrefix(subPrefix, message...)
+	result := formatPrefixWithSubPrefix(l.prefix, subPrefix, message...)
 
 	print(result)
 	panic(fmt.Sprint(message...))
@@ -55,7 +57,7 @@ func (l *logger) Error(message ...any) {
 		Structure: "ERROR",
 		Color:     colors.BrightRed,
 	}
-	result := l.prefix.FormatTextWithSubPrefix(subPrefix, message...)
+	result := formatPrefixWithSubPrefix(l.prefix, subPrefix, message...)
 
 	print(result)
 }
@@ -64,6 +66,26 @@ func (l *logger) Error(message ...any) {
 func (l *logger) Errorf(format string, arguments ...any) {
 	text := fmt.Sprintf(format, arguments...)
 	l.Error(text)
+}
+
+// --> Fatal
+
+// Prints an error message with color and prefix and calls os.Exit(1)
+func (l *logger) Fatal(message ...any) {
+	subPrefix := &subPrefix{
+		Structure: "FATAL",
+		Color:     colors.BrightOrange,
+	}
+	result := formatPrefixWithSubPrefix(l.prefix, subPrefix, message...)
+
+	print(result)
+	os.Exit(1)
+}
+
+// Equivalent to logger.Fatal() with formatting
+func (l *logger) Fatalf(format string, arguments ...any) {
+	text := fmt.Sprintf(format, arguments...)
+	l.Fatal(text)
 }
 
 // --> Setters
@@ -94,26 +116,6 @@ func (p *Prefix) Format() string {
 	return colors.Format(p.Color, p.Structure)
 }
 
-// Formats prefix with color and adds it to a message
-func (p *Prefix) FormatText(message ...any) string {
-	prefix := p.Format()
-	text := colors.FormatCyan(message...)
-	result := fmt.Sprintf("%v%v\n", prefix, text)
-
-	return result
-}
-
-// Formats prefix with color, adds it to a subprefix and adds a message
-func (p *Prefix) FormatTextWithSubPrefix(sub *subPrefix, message ...any) string {
-	prefix := p.Format()
-	text := colors.FormatYellow(message...)
-	subPrefixText := colors.Format(sub.Color, sub.Structure)
-
-	result := fmt.Sprintf("%v%v %v\n", prefix, subPrefixText, text)
-
-	return result
-}
-
 // --> log := aura.NewLogger()
 
 // Creates a new logger
@@ -123,4 +125,43 @@ func NewLogger(name string) *logger {
 	}
 
 	return instance
+}
+
+// --> Utils
+
+// Formats prefix with color, adds it to a subprefix and adds a message
+func formatPrefixWithSubPrefix(p *Prefix, s *subPrefix, message ...any) string {
+
+	var prefix string
+	if p != nil {
+		prefix = p.Format()
+	}
+
+	text := colors.FormatYellow(message...)
+	subPrefixText := colors.Format(s.Color, s.Structure)
+
+	result := removeSpaceFromFormatedMessage(fmt.Sprintf("%v%v %v\n", prefix, subPrefixText, text))
+	return result
+}
+
+// Formats prefix with color and adds it to a message
+func formatPrefixWithText(p *Prefix, message ...any) string {
+
+	var prefix string
+	if p != nil {
+		prefix = p.Format()
+	}
+
+	text := colors.FormatCyan(message...)
+
+	result := removeSpaceFromFormatedMessage(fmt.Sprintf("%v%v\n", prefix, text))
+	return result
+}
+
+func removeSpaceFromFormatedMessage(message string) string {
+	message = strings.TrimLeftFunc(message, func(r rune) bool {
+		return r == ' '
+	})
+
+	return message
 }
