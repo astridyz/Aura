@@ -13,7 +13,7 @@ type logger struct {
 }
 
 // Formats prefix with color, adds it to a subprefix and adds a message
-func (l *logger) log(s *subPrefix, color colors.Color, message ...any) string {
+func (l *logger) log(s *Prefix, color colors.Color, message ...any) string {
 
 	var prefix string
 	var subPrefixText string
@@ -23,7 +23,7 @@ func (l *logger) log(s *subPrefix, color colors.Color, message ...any) string {
 	}
 
 	if s != nil {
-		subPrefixText = colors.Format(s.Color, s.Structure)
+		subPrefixText = s.Format()
 	}
 
 	text := colors.Format(color, message...)
@@ -52,7 +52,7 @@ func (l *logger) Printf(format string, arguments ...any) string {
 
 // Is equivalent to print() with color and prefix if defined.
 func (l *logger) Warn(message ...any) string {
-	subPrefix := &subPrefix{
+	subPrefix := &Prefix{
 		Structure: "WARN ",
 		Color:     colors.BrightYellow,
 	}
@@ -72,7 +72,7 @@ func (l *logger) Warnf(format string, arguments ...any) string {
 
 // It prints a message and call panic() with color
 func (l *logger) Panic(message ...any) {
-	subPrefix := &subPrefix{
+	subPrefix := &Prefix{
 		Structure: "PANIC",
 		Color:     colors.BrightPurple,
 	}
@@ -92,7 +92,7 @@ func (l *logger) Panicf(format string, arguments ...any) {
 
 // Prints an error message with color and prefix
 func (l *logger) Error(message ...any) {
-	subPrefix := &subPrefix{
+	subPrefix := &Prefix{
 		Structure: "ERROR",
 		Color:     colors.BrightRed,
 	}
@@ -111,7 +111,7 @@ func (l *logger) Errorf(format string, arguments ...any) {
 
 // Prints an error message with color and prefix and calls os.Exit(1)
 func (l *logger) Fatal(message ...any) {
-	subPrefix := &subPrefix{
+	subPrefix := &Prefix{
 		Structure: "FATAL",
 		Color:     colors.BrightOrange,
 	}
@@ -148,21 +148,14 @@ func (p *Prefix) Format() string {
 	return colors.Format(p.Color, p.Structure)
 }
 
-// Some functions have subprefixes, like error and panic
-// It is used to symbolize which message type was printed
-type subPrefix struct {
-	Structure string
-	Color     colors.Color
-}
-
 // --> log := aura.NewLogger()
 
 // Creates a new logger
-func NewLogger(prefixes ...*Prefix) *logger {
+func NewLogger(prefix ...*Prefix) *logger {
 	instance := &logger{}
 
-	if len(prefixes) > 0 {
-		instance.Prefix = prefixes[0]
+	if len(prefix) > 0 {
+		instance.Prefix = prefix[0]
 	}
 
 	return instance
