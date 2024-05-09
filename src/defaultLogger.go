@@ -30,10 +30,10 @@ func Printf(format string, arguments ...any) string {
 // Is equivalent to print() with color and prefix if defined.
 func Warn(message ...any) string {
 	subPrefix := &Prefix{
-		Structure: "WARN ",
+		Structure: "WARN",
 		Color:     colors.BrightYellow,
 	}
-	result := defaultLogger.log(subPrefix, colors.BrightYellow, message...)
+	result := defaultLogger.log(subPrefix, colors.Orange, message...)
 
 	print(result)
 	return result
@@ -53,7 +53,7 @@ func Panic(message ...any) {
 		Structure: "PANIC",
 		Color:     colors.BrightPurple,
 	}
-	result := defaultLogger.log(subPrefix, colors.BrightYellow, message...)
+	result := defaultLogger.log(subPrefix, colors.Yellow, message...)
 
 	print(result)
 	panic(fmt.Sprint(message...))
@@ -73,7 +73,7 @@ func Error(message ...any) {
 		Structure: "ERROR",
 		Color:     colors.BrightRed,
 	}
-	result := defaultLogger.log(subPrefix, colors.BrightYellow, message...)
+	result := defaultLogger.log(subPrefix, colors.Yellow, message...)
 
 	print(result)
 }
@@ -92,7 +92,7 @@ func Fatal(message ...any) {
 		Structure: "FATAL",
 		Color:     colors.BrightOrange,
 	}
-	result := defaultLogger.log(subPrefix, colors.BrightYellow, message...)
+	result := defaultLogger.log(subPrefix, colors.Yellow, message...)
 
 	print(result)
 	os.Exit(1)

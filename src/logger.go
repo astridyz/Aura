@@ -29,20 +29,23 @@ func NewLogger(prefix ...*Prefix) *logger {
 func (l *logger) log(s *Prefix, color colors.Color, message ...any) string {
 
 	var prefix string
-	var subPrefixText string
+	var result string
 
 	if l.Prefix != nil {
 		prefix = l.Prefix.Format()
 	}
 
+	text := colors.Format(color, message...)
+
 	if s != nil {
-		subPrefixText = s.Format()
+		result = fmt.Sprintf("%v %v %v\n", prefix, s.Format(), text)
 	}
 
-	text := colors.Format(color, message...)
-	result := removeSpaceFromFormatedMessage(fmt.Sprintf("%v%v %v\n", prefix, subPrefixText, text))
+	if s == nil {
+		result = fmt.Sprintf("%v %v\n", prefix, text)
+	}
 
-	return result
+	return removeSpaceFromFormatedMessage(result)
 }
 
 // --> Print
@@ -66,10 +69,10 @@ func (l *logger) Printf(format string, arguments ...any) string {
 // Is equivalent to print() with color and prefix if defined.
 func (l *logger) Warn(message ...any) string {
 	subPrefix := &Prefix{
-		Structure: "WARN ",
+		Structure: "WARN",
 		Color:     colors.BrightYellow,
 	}
-	result := l.log(subPrefix, colors.BrightYellow, message...)
+	result := l.log(subPrefix, colors.Orange, message...)
 
 	print(result)
 	return result
@@ -89,7 +92,7 @@ func (l *logger) Panic(message ...any) {
 		Structure: "PANIC",
 		Color:     colors.BrightPurple,
 	}
-	result := l.log(subPrefix, colors.BrightYellow, message...)
+	result := l.log(subPrefix, colors.Yellow, message...)
 
 	print(result)
 	panic(fmt.Sprint(message...))
@@ -109,7 +112,7 @@ func (l *logger) Error(message ...any) {
 		Structure: "ERROR",
 		Color:     colors.BrightRed,
 	}
-	result := l.log(subPrefix, colors.BrightYellow, message...)
+	result := l.log(subPrefix, colors.Yellow, message...)
 
 	print(result)
 }
@@ -128,7 +131,7 @@ func (l *logger) Fatal(message ...any) {
 		Structure: "FATAL",
 		Color:     colors.BrightOrange,
 	}
-	result := l.log(subPrefix, colors.BrightYellow, message...)
+	result := l.log(subPrefix, colors.Yellow, message...)
 
 	print(result)
 	os.Exit(1)
