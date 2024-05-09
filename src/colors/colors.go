@@ -7,30 +7,30 @@ import (
 type Color string
 
 const (
-	Cyan   Color = "\u001b[38;5;159m"
-	Pink   Color = "\u001b[38;5;225m"
-	Red    Color = "\u001b[38;5;224m"
-	Green  Color = "\u001b[38;5;194m"
-	Yellow Color = "\u001b[38;5;230m"
-	Purple Color = "\u001b[38;5;141m"
-	Orange Color = "\u001b[38;5;216m"
-	Reset  Color = "\u001b[0m"
+	Cyan   Color = "\033[38;5;159m"
+	Pink   Color = "\033[38;5;225m"
+	Red    Color = "\033[38;5;224m"
+	Green  Color = "\033[38;5;194m"
+	Yellow Color = "\033[38;5;230m"
+	Purple Color = "\033[38;5;141m"
+	Orange Color = "\033[38;5;216m"
+	Reset  Color = "\033[0m"
 )
 
 const (
-	BrightCyan   Color = "\u001b[1m\u001b[38;5;159m"
-	BrightPink   Color = "\u001b[1m\u001b[38;5;225m"
-	BrightRed    Color = "\u001b[1m\u001b[38;5;224m"
-	BrightGreen  Color = "\u001b[1m\u001b[38;5;194m"
-	BrightYellow Color = "\u001b[1m\u001b[38;5;230m"
-	BrightPurple Color = "\u001b[1m\u001b[38;5;141m"
-	BrightOrange Color = "\u001b[1m\u001b[38;5;216m"
+	BrightCyan   Color = "\033[1m\033[38;5;159m"
+	BrightPink   Color = "\033[1m\033[38;5;225m"
+	BrightRed    Color = "\033[1m\033[38;5;224m"
+	BrightGreen  Color = "\033[1m\033[38;5;194m"
+	BrightYellow Color = "\033[1m\033[38;5;230m"
+	BrightPurple Color = "\033[1m\033[38;5;141m"
+	BrightOrange Color = "\033[1m\033[38;5;216m"
 )
 
-func Format(mensageColor Color, message ...any) string {
+func Format(messageColor Color, message ...any) string {
 	text := fmt.Sprint(message...)
 
-	return fmt.Sprintf("%v%v%v", mensageColor, text, Reset)
+	return fmt.Sprintf("%v%v%v", messageColor, text, Reset)
 }
 
 // --> Color.FormatCyan("message")
