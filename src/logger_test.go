@@ -2,18 +2,18 @@ package aura
 
 import (
 	"testing"
+
+	"github.com/astridyz/Aura/src/colors"
 )
 
 func TestLoggerError(t *testing.T) {
 
 	log := NewLogger()
 
-	/*
-		log.SetPrefix(&Prefix{
-			Structure: "Astrid: ",
-			Color:     colors.BrightPink,
-		})
-	*/
+	log.SetPrefix(&Prefix{
+		Structure: "Astrid: ",
+		Color:     colors.BrightPink,
+	})
 
 	log.Print("Hey, keep going! Don't give up.")
 	log.Printf("Hey, %v, how are you?", "Kame")
@@ -23,6 +23,9 @@ func TestLoggerError(t *testing.T) {
 
 	log.Error("That's an error!")
 	log.Errorf("Hey, %v, help me with this problem...", "Kame")
+
+	Print("Default logger print!")
+	Warn("That's the default logger warn.")
 
 	log.Fatal("And that's a fatal.")
 }

@@ -12,6 +12,19 @@ type logger struct {
 	Prefix *Prefix
 }
 
+// --> log := aura.NewLogger()
+
+// Creates a new logger
+func NewLogger(prefix ...*Prefix) *logger {
+	instance := &logger{}
+
+	if len(prefix) > 0 {
+		instance.Prefix = prefix[0]
+	}
+
+	return instance
+}
+
 // Formats prefix with color, adds it to a subprefix and adds a message
 func (l *logger) log(s *Prefix, color colors.Color, message ...any) string {
 
@@ -146,19 +159,6 @@ type Prefix struct {
 // Formats prefix with color
 func (p *Prefix) Format() string {
 	return colors.Format(p.Color, p.Structure)
-}
-
-// --> log := aura.NewLogger()
-
-// Creates a new logger
-func NewLogger(prefix ...*Prefix) *logger {
-	instance := &logger{}
-
-	if len(prefix) > 0 {
-		instance.Prefix = prefix[0]
-	}
-
-	return instance
 }
 
 // --> Utils
