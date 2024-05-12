@@ -15,22 +15,15 @@ Import as:
 import aura "github.com/astridyz/Aura/src"
 ```
 
-Colors package:
-```go
-import "github.com/astridyz/Aura/src/colors"
-```
-
 ## Usage
-```go
-log := aura.NewLogger("Main")
 
-log.SetPrefix(&aura.Prefix{ // --> Prefixes aren't needed
-	Structure: "Astrid: ",
-	Color:     colors.BrightPink,
-})
+```go
+log := aura.New(&aura.Prefix{Body: "Astrid:", Level: aura.Debug})
 
 log.Print("Hey, keep going! Don't give up.")
 log.Printf("Hey, %v, how are you?", "Kame")
+
+log.Warn("Warning! Server is closing!")
 
 log.Error("That's an error!")
 log.Errorf("Hey, %v, help me with this problem...", "Kame")
