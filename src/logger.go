@@ -1,21 +1,74 @@
 package aura
 
-import (
-	"fmt"
-	"os"
-	"strings"
-
-	"github.com/astridyz/Aura/src/colors"
-)
+import "fmt"
 
 type logger struct {
 	Prefix *Prefix
 }
 
-// --> log := aura.NewLogger()
+// --> Prefix is used before log messages,
+// --> It has a structure and a color to define how it'll be showed
+type Prefix struct {
+	Body  string
+	color string
+}
 
-// Creates a new logger
-func NewLogger(prefix ...*Prefix) *logger {
+//
+type message struct {
+	Body  any
+	Level logLevel
+}
+
+// --> Color type, it needs to be formated to be used in strings
+type color = int
+
+// --> Used to send a color to formats, without needing to know the color integer
+type TextColor = string
+
+// --> Log level type
+type logLevel = int
+
+// --> Formated colors are colors that were formated after
+// --> using the colorIntToString function()
+type formatedColor = string
+
+var (
+	// Colors map[string]color
+
+	formatedColors map[logLevel]string
+
+	// brightFormatedColors map[logLevel]string
+)
+
+// --> Colors constants, all of them are pastel colors
+const (
+	Cyan   color = 159
+	Pink   color = 225
+	Red    color = 224
+	Yellow color = 230
+	Purple color = 141
+	Orange color = 216
+)
+
+const ColorReset string = "\033[0m"
+
+// --> Log levels constants, defining the color of the messages
+const (
+	Critical logLevel = iota + 1
+	Error
+	Warning
+	Debug
+	Info
+)
+
+// --> Initializating module
+func init() {
+	initColors()
+}
+
+// --> Instanciating a new logger and returning it
+// --> Factory function
+func New(prefix ...*Prefix) *logger {
 	instance := &logger{}
 
 	if len(prefix) > 0 {
@@ -25,151 +78,62 @@ func NewLogger(prefix ...*Prefix) *logger {
 	return instance
 }
 
-// Formats prefix with color, adds it to a subprefix and adds a message
-func (l *logger) log(s *Prefix, color colors.Color, message ...any) string {
+func (l *logger) log(msg message) {
+	text := formatColor(msg)
+	print(text)
+}
 
-	var prefix string
-	var result string
+func (l *logger) Print(args ...any) {
+	l.log(message{Body: args, Level: Info})
+}
 
-	if l.Prefix != nil {
-		prefix = l.Prefix.Format()
+// --> Initing all colors in a map
+func initColors() {
+	formatedColors = map[logLevel]string{
+		Critical: colorIntToString(Orange),
+		Error:    colorIntToString(Red),
+		Warning:  colorIntToString(Yellow),
+		Debug:    colorIntToString(Pink),
+		Info:     colorIntToString(Cyan),
 	}
 
-	text := colors.Format(color, message...)
+	/*
+		brightFormatedColors = map[logLevel]string{
+			Critical: colorIntToBrightString(Orange),
+			Error:    colorIntToBrightString(Red),
+			Warning:  colorIntToBrightString(Yellow),
+			Debug:    colorIntToBrightString(Pink),
+			Info:     colorIntToBrightString(Cyan),
+		}
 
-	if s != nil {
-		result = fmt.Sprintf("%v %v %v\n", prefix, s.Format(), text)
-	}
-
-	if s == nil {
-		result = fmt.Sprintf("%v %v\n", prefix, text)
-	}
-
-	return removeSpaceFromFormatedMessage(result)
+		Colors = map[TextColor]color{
+			"Cyan":   Cyan,
+			"Pink":   Pink,
+			"Red":    Red,
+			"Yellow": Yellow,
+			"Purple": Purple,
+			"Orange": Orange,
+		}
+	*/
 }
 
-// --> Print
+func formatColor(msg message) string {
+	text := fmt.Sprint(msg.Body)
+	formatedColor := formatedColors[msg.Level]
+	print(formatedColor)
 
-// Is equivalent to print() with color and prefix if defined.
-func (l *logger) Print(message ...any) string {
-	result := l.log(nil, colors.Cyan, message...)
-
-	print(result)
-	return result
+	return fmt.Sprintf("%v%v%v\n", formatedColor, text, ColorReset)
 }
 
-// Is equivalent to logger.Print() with formatting
-func (l *logger) Printf(format string, arguments ...any) string {
-	text := fmt.Sprintf(format, arguments...)
-	return l.Print(text)
+// --> Used to format colors integers into ANSI codes
+func colorIntToString(color color) formatedColor {
+	return fmt.Sprintf("\033[38;5;%vm", color)
 }
 
-// --> Warn
-
-// Is equivalent to print() with color and prefix if defined.
-func (l *logger) Warn(message ...any) string {
-	subPrefix := &Prefix{
-		Structure: "WARN",
-		Color:     colors.BrightYellow,
-	}
-	result := l.log(subPrefix, colors.Orange, message...)
-
-	print(result)
-	return result
+/*
+// --> Same as colorIntToString(), but it adds a bright ANSI Code,
+// --> turning the text BOLD.
+func colorIntToBrightString(color color) formatedColor {
+	return fmt.Sprintf("\033[1m\033[38;5;%vm", color)
 }
-
-// Is equivalent to logger.Print() with formatting
-func (l *logger) Warnf(format string, arguments ...any) string {
-	text := fmt.Sprintf(format, arguments...)
-	return l.Warn(text)
-}
-
-// --> Panic
-
-// It prints a message and call panic() with color
-func (l *logger) Panic(message ...any) {
-	subPrefix := &Prefix{
-		Structure: "PANIC",
-		Color:     colors.BrightPurple,
-	}
-	result := l.log(subPrefix, colors.Yellow, message...)
-
-	print(result)
-	panic(fmt.Sprint(message...))
-}
-
-// Equivalent to logger.Panic() with formatting
-func (l *logger) Panicf(format string, arguments ...any) {
-	text := fmt.Sprintf(format, arguments...)
-	l.Panic(text)
-}
-
-// --> Error
-
-// Prints an error message with color and prefix
-func (l *logger) Error(message ...any) {
-	subPrefix := &Prefix{
-		Structure: "ERROR",
-		Color:     colors.BrightRed,
-	}
-	result := l.log(subPrefix, colors.Yellow, message...)
-
-	print(result)
-}
-
-// Equivalent to logger.Error() with formatting
-func (l *logger) Errorf(format string, arguments ...any) {
-	text := fmt.Sprintf(format, arguments...)
-	l.Error(text)
-}
-
-// --> Fatal
-
-// Prints an error message with color and prefix and calls os.Exit(1)
-func (l *logger) Fatal(message ...any) {
-	subPrefix := &Prefix{
-		Structure: "FATAL",
-		Color:     colors.BrightOrange,
-	}
-	result := l.log(subPrefix, colors.Yellow, message...)
-
-	print(result)
-	os.Exit(1)
-}
-
-// Equivalent to logger.Fatal() with formatting
-func (l *logger) Fatalf(format string, arguments ...any) {
-	text := fmt.Sprintf(format, arguments...)
-	l.Fatal(text)
-}
-
-// --> Setters
-
-// Sets the logger prefix.
-// The prefix will be added to every logger function message.
-func (l *logger) SetPrefix(Prefix *Prefix) {
-	l.Prefix = Prefix
-}
-
-// --> Prefix
-
-// It's added to every logger function message
-type Prefix struct {
-	Structure string
-	Color     colors.Color
-}
-
-// Formats prefix with color
-func (p *Prefix) Format() string {
-	return colors.Format(p.Color, p.Structure)
-}
-
-// --> Utils
-
-func removeSpaceFromFormatedMessage(message string) string {
-	message = strings.TrimLeftFunc(message, func(r rune) bool {
-		return r == ' '
-	})
-
-	return message
-}
+*/
